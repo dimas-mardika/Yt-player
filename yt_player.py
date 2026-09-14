@@ -1,3 +1,10 @@
+# ==============================================================================
+# 🎵 PYTHON YOUTUBE LITE PLAYER
+# Developed by: Dimas Mardika
+# License: MIT
+# Description: Ultra-lightweight terminal player built for speed & focus mode.
+# ==============================================================================
+
 import os
 import subprocess
 import shutil
@@ -6,13 +13,13 @@ import sys
 try:
     from yt_dlp import YoutubeDL
 except ImportError:
-    print("❌ Modul 'yt-dlp' belum terinstall.")
-    print("💡 Jalankan perintah: py -m pip install yt-dlp")
+    print("❌ Waduh, modul 'yt-dlp' belum ke-install nih, bro!")
+    print("💡 Coba running command ini dulu ya: py -m pip install yt-dlp")
     sys.exit(1)
 
 def cari_lagu_youtube(query, limit=5):
     """Mencari daftar lagu di YouTube."""
-    print(f"\n🔍 Mencari lagu: '{query}' di YouTube...\n")
+    print(f"\n🔍 OTW nyari lagu: '{query}' di YouTube...\n")
     ydl_opts = {
         'format': 'bestaudio/best',
         'noplaylist': True,
@@ -26,7 +33,7 @@ def cari_lagu_youtube(query, limit=5):
             results = info.get('entries', [])
             return [r for r in results if r]
         except Exception as e:
-            print(f"❌ Error pencarian: {e}")
+            print(f"❌ Yah error pas nyari, bro: {e}")
             return []
 
 def ambil_direct_stream_url(video_url):
@@ -41,7 +48,7 @@ def ambil_direct_stream_url(video_url):
             info = ydl.extract_info(video_url, download=False)
             return info.get('url')
         except Exception as e:
-            print(f"❌ Gagal mengambil stream URL: {e}")
+            print(f"❌ Amsyong, gagal extract stream link-nya: {e}")
             return None
 
 def cari_mpv_path():
@@ -53,22 +60,22 @@ def cari_mpv_path():
 
 def putar_audio(video_url, judul):
     """Memutar audio menggunakan MPV native sistem."""
-    print("⏳ Menyiapkan stream audio...")
+    print("⏳ Wait ya, lagi nyiapin stream audio-nya...")
     stream_url = ambil_direct_stream_url(video_url)
     
     if not stream_url:
-        print("❌ Gagal memproses link audio.")
-        input("\nTekan Enter untuk melanjutkan...")
+        print("❌ Gagal memproses audio link-nya nih, bro.")
+        input("\nTekan Enter dulu buat lanjut...")
         return
 
     mpv_bin = cari_mpv_path()
     
-    print(f"\n▶️ Memutar: {judul}")
+    print(f"\n▶️ Now Playing: {judul}")
     print("--------------------------------------------------")
-    print("💡 KONTROL KEYBOARD MPV:")
+    print("💡 SHORTCUT KEYBOARD MPV:")
     print("   [SPASI] = Pause / Play")
     print("   [ 9 ] / [ 0 ] = Kecilkan / Besarkan Volume")
-    print("   [ q ] = Stop & Kembali ke Menu (Ganti Lagu)")
+    print("   [ q ] = Stop & Back to Search Menu")
     print("--------------------------------------------------\n")
 
     cmd = [
@@ -85,40 +92,41 @@ def putar_audio(video_url, judul):
         process = subprocess.Popen(cmd)
         process.wait()
     except FileNotFoundError:
-        print(f"❌ Error: Executable MPV tidak ditemukan.")
-        input("\nTekan Enter untuk melanjutkan...")
+        print("❌ MPV executable-nya gak ketemu di sistem, bro.")
+        input("\nTekan Enter dulu buat lanjut...")
     except Exception as e:
-        print(f"❌ Error memutar audio: {e}")
-        input("\nTekan Enter untuk melanjutkan...")
+        print(f"❌ Error pas lagi mutar lagu: {e}")
+        input("\nTekan Enter dulu buat lanjut...")
 
 def main():
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
         print("==================================================")
-        print("    🎵 PYTHON YOUTUBE LITE PLAYER (< 20 KB) 🎵    ")
+        print("   🎵 PYTHON YOUTUBE LITE PLAYER 🎵    ")
+        print("        Developed & Created by Dimas Mardika      ")
         print("==================================================")
         
-        keyword = input("\nKetik nama lagu / artis (atau 'q' untuk keluar): ").strip()
+        keyword = input("\nKetik judul lagu / artist (atau 'q' buat cabut): ").strip()
         if keyword.lower() == 'q':
-            print("Sampai jumpa, bro! 👋")
+            print("\nCabut dulu, bro! Catch you later 👋🔥\n")
             break
         if not keyword:
             continue
             
         lagu_list = cari_lagu_youtube(keyword, limit=5)
         if not lagu_list:
-            print("Lagu tidak ditemukan. Coba kata kunci lain.")
-            input("\nTekan Enter untuk mencoba lagi...")
+            print("Zonk! Lagunya gak ketemu. Coba pake keyword lain deh.")
+            input("\nTekan Enter buat nyoba lagi...")
             continue
             
         print("==================================================")
-        print(f" HASIL PENCARIAN UNTUK: '{keyword.upper()}'")
+        print(f" HASIL SEARCHING BUAT: '{keyword.upper()}'")
         print("==================================================")
         for i, item in enumerate(lagu_list, start=1):
             judul = item.get('title', 'Unknown Title')
             uploader = item.get('uploader', 'Unknown Channel')
             print(f"[{i}] {judul} ({uploader})")
-        print("[0] Batal / Cari Lagi")
+        print("[0] Cancel / Search Ulang")
         print("--------------------------------------------------")
         
         pilihan = input("Pilih nomor lagu yang mau diputar (1-5): ").strip()
